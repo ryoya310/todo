@@ -12,9 +12,6 @@ class TodoPage extends StatefulWidget {
 
 class _TodoPageState extends State<TodoPage> {
 
-  final nameController = TextEditingController();
-  final dateController = TextEditingController();
-
   CalendarFormat calendarFormat = CalendarFormat.month;
   DateTime focused = DateTime.now();
   DateTime? selected;
@@ -31,13 +28,6 @@ class _TodoPageState extends State<TodoPage> {
       Provider.of<TodoProvider>(context, listen: false).loadTodos()
     );
     selected = focused;
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    dateController.dispose();
-    super.dispose();
   }
 
   String formatDate(DateTime selected, bool isJP) {

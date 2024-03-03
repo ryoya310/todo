@@ -23,27 +23,36 @@ class SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     return Consumer<SettingsProvider>(
       builder: (context, settingsProvider, child) {
-        return Column(
-          children: [
-            SettingItem(
-              title: settingsProvider.isJP ? 'ダークモード' : 'DarkMode',
-              trailing: Switch(
-                value: (settingsProvider.isDark == true),
-                onChanged: (bool value) {
-                  settingsProvider.toggleTheme();
-                },
-              ),
+        return Scaffold(
+          appBar: AppBar(
+            toolbarHeight: 50,
+            title: Text(
+              settingsProvider.isJP ? '設定' : 'Settings',
+              style: const TextStyle(fontSize: 20.0),
             ),
-            SettingItem(
-              title: settingsProvider.isJP ? 'Language: Switch to English' : '言語: 日本語に切替',
-              trailing: Switch(
-                value: (settingsProvider.isJP == true),
-                onChanged: (bool value) {
-                  settingsProvider.toggleLang();
-                },
+          ),
+          body: Column(
+            children: [
+              SettingItem(
+                title: settingsProvider.isJP ? 'ダークモード' : 'DarkMode',
+                trailing: Switch(
+                  value: (settingsProvider.isDark == true),
+                  onChanged: (bool value) {
+                    settingsProvider.toggleTheme();
+                  },
+                ),
               ),
-            ),
-          ],
+              SettingItem(
+                title: settingsProvider.isJP ? 'Language: Switch to English' : '言語: 日本語に切替',
+                trailing: Switch(
+                  value: (settingsProvider.isJP == true),
+                  onChanged: (bool value) {
+                    settingsProvider.toggleLang();
+                  },
+                ),
+              ),
+            ],
+          )
         );
       },
     );

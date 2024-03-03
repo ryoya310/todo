@@ -13,7 +13,10 @@ class TodoProvider extends ChangeNotifier {
   }
 
   Future<void> loadTodos() async {
-    todos = await isar.todos.where().sortByDateFrom().findAll();
+    todos = await isar.todos.where()
+      .sortByIsComplete()
+      .thenByDateFrom()
+      .findAll();
     updateTodos();
   }
 
@@ -21,11 +24,23 @@ class TodoProvider extends ChangeNotifier {
     return await isar.todos.get(id);
   }
 
-  Future<void> updateTodo(Todo updatedTodo) async {
-    await isar.writeTxn(() async {
-      await isar.todos.put(updatedTodo);
-    });
-    loadTodos();
+  Future<Map<String, dynamic>> updateTodo(Todo updatedTodo) async {
+    Map<String, dynamic> response = {
+      'result': false,
+      'error': '',
+      'data': ''
+    };
+    try {
+      await isar.writeTxn(() async {
+        await isar.todos.put(updatedTodo);
+      });
+      loadTodos();
+      response['result'] = true;
+      response['data'] = updatedTodo.toString();
+    } catch (e) {
+      response['error'] = e.toString();
+    }
+    return response;
   }
 
   Future<void> completeTodoById(int todoId, bool isComplete) async {

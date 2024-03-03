@@ -2,10 +2,10 @@ import '../imports.dart';
 
 class Footer extends StatelessWidget {
   final MotionTabBarController controller;
-  const Footer({Key? key, required this.controller}) : super(key: key);
+  const Footer({Key? key, required this.controller}): super(key: key);
   @override
   Widget build(BuildContext context) {
-    var labels = ['Home', 'Todo', 'Shopping', 'Calculation', 'Settings'];
+    var labels = ['Home', 'Todo', 'Shop', 'Calc', 'Settings'];
     return MotionTabBar(
       controller: controller,
       initialSelectedTab: 'Home',
@@ -19,9 +19,9 @@ class Footer extends StatelessWidget {
         LineIcons.cog
       ],
       tabSize: 32,
-      tabBarHeight: 46,
+      tabBarHeight: 40,
       textStyle: const TextStyle(
-        fontSize: 12,
+        fontSize: 10,
         color: Colors.black,
         fontWeight: FontWeight.w500,
       ),

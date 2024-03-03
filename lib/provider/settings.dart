@@ -3,7 +3,7 @@ import '../imports.dart';
 class SettingsProvider extends ChangeNotifier {
   bool isLoading = true;
   // テーマ
-  ThemeData currentTheme = ThemeData.dark();
+  Brightness currentTheme = Brightness.dark;
   bool isDark = true;
 
   // 言語
@@ -15,7 +15,7 @@ class SettingsProvider extends ChangeNotifier {
     Map<String, dynamic> settings = await readSettings();
     // テーマ
     if (settings['theme'] != null) {
-      currentTheme = settings['theme'] == 'dark' ? ThemeData.dark() : ThemeData.light();
+      currentTheme = settings['theme'] == 'dark' ? Brightness.dark : Brightness.light;
       isDark = settings['theme'] == 'dark';
     }
     // 言語
@@ -30,13 +30,13 @@ class SettingsProvider extends ChangeNotifier {
   // テーマ変更 [保存]
   Future<void> toggleTheme() async {
     isDark = !isDark;
-    currentTheme = isDark ? ThemeData.dark() : ThemeData.light();
+    currentTheme = isDark ? Brightness.dark : Brightness.light;
     String saveTheme = isDark ? 'dark' : 'light';
     await saveSettings({'theme': saveTheme});
     notifyListeners();
   }
 
-  // 言語変更 [保存]FormatException
+  // 言語変更 [保存]
   Future<void> toggleLang() async {
     isJP = !isJP;
     currentLang = isJP ? 'ja_JP' : 'en';

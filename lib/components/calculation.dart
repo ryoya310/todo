@@ -1,8 +1,10 @@
 import 'package:math_expressions/math_expressions.dart';
+import 'package:intl/intl.dart';
 import '../imports.dart';
 
 class Calculator extends StatefulWidget {
-  const Calculator({Key? key}): super(key: key);
+  final Function(String) saved;
+  const Calculator({Key? key, required this.saved}): super(key: key);
   @override
   CalculatorState createState() => CalculatorState();
 }
@@ -21,6 +23,7 @@ class CalculatorState extends State<Calculator> {
       sum = 0;
     // 保存
     } else if (buttonText == 'S') {
+      widget.saved(output);
       return;
     // パーセント
     } else if (buttonText == '%') {
@@ -92,6 +95,7 @@ class CalculatorState extends State<Calculator> {
 
   double _calculateResult(String output) {
     if (output == '') { return 0; }
+    // String output = '6/2(1+2)'; // 9
     String processedInput = output.replaceAllMapped(RegExp(r'(\d)\('), (Match m) => '${m[1]}*(');
     Parser p = Parser();
     Expression exp = p.parse(processedInput);
@@ -181,6 +185,12 @@ class CalculatorState extends State<Calculator> {
     );
   }
 
+  String customFormat(double value) {
+    // 小数部が0でない場合は小数点以下を最大2桁まで表示
+    String format = value.remainder(1) == 0 ? "#,##0" : "#,##0.##";
+    return NumberFormat(format, "en_US").format(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -188,7 +198,6 @@ class CalculatorState extends State<Calculator> {
         padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 30, 30, 30),
-          borderRadius: BorderRadius.circular(20.0),
         ),
         child: Column(
           children: <Widget>[
@@ -201,7 +210,14 @@ class CalculatorState extends State<Calculator> {
                 borderRadius: BorderRadius.circular(14.0),
               ),
               child: Column(children: [
-                Text(outputs.join(' '), style: const TextStyle(fontSize: 12.0)),
+                Text(
+                  outputs.join(' '),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.black87
+                  )
+                ),
               ])
             ),
             Container(
@@ -213,7 +229,14 @@ class CalculatorState extends State<Calculator> {
                 borderRadius: BorderRadius.circular(14.0),
               ),
               child: Column(children: [
-                Text(output, style: const TextStyle(fontSize: 50.0)),
+                Text(
+                  customFormat(double.parse(output)),
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 50.0,
+                    color: Colors.black87
+                  )
+                ),
               ])
             ),
             Column(children: [

@@ -5,6 +5,7 @@ export 'dart:io';
 
 // package
 export 'package:flutter/material.dart';
+export 'package:flutter/services.dart';
 // https://icons8.com/line-awesome
 export 'package:line_icons/line_icons.dart';
 export 'package:logger/logger.dart';
@@ -20,15 +21,17 @@ export 'package:provider/provider.dart';
 export 'package:path_provider/path_provider.dart';
 export 'package:flutter/services.dart' show rootBundle;
 export 'package:isar/isar.dart';
+export 'package:flutter_local_notifications/flutter_local_notifications.dart';
+export 'package:workmanager/workmanager.dart';
+export 'package:flutter_native_splash/flutter_native_splash.dart';
 
 // config
 export 'config.dart';
 
 // components
-export 'components/crystal.dart';
-export 'components/icon.dart';
+// export 'components/crystal.dart';
+// export 'components/icon.dart';
 export 'components/footer.dart';
-export 'components/dialog.dart';
 export 'components/modal.dart';
 export 'components/alert.dart';
 export 'components/confirm.dart';
@@ -36,12 +39,18 @@ export 'components/calculation.dart';
 
 // classes
 export 'classes/todo.dart';
+export 'classes/calculation.dart';
+export 'classes/shopping.dart';
 
 // provider
 export 'provider/settings.dart';
 export 'provider/todo.dart';
+export 'provider/calculation.dart';
+export 'provider/shopping.dart';
 
 // pages
+export 'package:todo/pages/home/index.dart';
 export 'package:todo/pages/todo/index.dart';
 export 'package:todo/pages/settings/index.dart';
+export 'package:todo/pages/shopping/index.dart';
 export 'package:todo/pages/calculation/index.dart';

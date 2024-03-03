@@ -44,6 +44,7 @@ class TodoItem extends StatelessWidget {
                   content: settingsProvider.isJP ? '削除しますか？' : 'Do you want to delete it?',
                   onClick: () {
                     todoProvider.deleteTodo(todo.id);
+                    Slidable.of(context)?.close();
                   },
                 );
               },
@@ -104,7 +105,7 @@ class TodoItem extends StatelessWidget {
               ),
             ),
           ),
-          onTap: () async {
+          onLongPress: () async {
             showOpenModal(
               context,
               title: settingsProvider.isJP ? '編集' : 'Edit',
