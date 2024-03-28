@@ -5,7 +5,11 @@ class Footer extends StatelessWidget {
   const Footer({Key? key, required this.controller}): super(key: key);
   @override
   Widget build(BuildContext context) {
-    var labels = ['Home', 'Todo', 'Shop', 'Calc', 'Settings'];
+    final settingsProvider = Provider.of<SettingsProvider>(context, listen: true);
+    var labels = settingsProvider.isJP
+      ? ['Home', 'Todo', 'Shop', 'Calc', 'Settings']
+      : ['Home', 'Todo', 'Shop', 'Calc', 'Settings'];
+
     return MotionTabBar(
       controller: controller,
       initialSelectedTab: 'Home',
@@ -18,17 +22,17 @@ class Footer extends StatelessWidget {
         LineIcons.calculator,
         LineIcons.cog
       ],
-      tabSize: 32,
+      tabSize: 30,
       tabBarHeight: 40,
       textStyle: const TextStyle(
         fontSize: 10,
-        color: Colors.black,
+        color: Colors.blue,
         fontWeight: FontWeight.w500,
       ),
       tabIconColor: Colors.blue[600],
-      tabIconSize: 22.0,
-      tabIconSelectedSize: 24.0,
-      tabSelectedColor: Colors.blue[900],
+      tabIconSize: 20.0,
+      tabIconSelectedSize: 22.0,
+      tabSelectedColor: Colors.blue,
       onTabItemSelected: (int value) async {
         controller.index = value;
       },

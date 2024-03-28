@@ -66,8 +66,11 @@ class ShoppingItem extends StatelessWidget {
             children: [
               Container(
                 height: 62,
-                width: 4,
-                color: Colors.deepOrange,
+                width: 5,
+                decoration: BoxDecoration(
+                  color: Colors.deepOrange,
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -77,7 +80,7 @@ class ShoppingItem extends StatelessWidget {
                     Text(
                       shopping.name ?? '-',
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 28.0)
+                      style: const TextStyle(fontSize: 24.0)
                     ),
                     Row(
                       children: [

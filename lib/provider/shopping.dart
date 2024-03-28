@@ -3,6 +3,7 @@ import '../imports.dart';
 class ShoppingProvider extends ChangeNotifier {
   final Isar isar;
   List<Shopping> shoppings = [];
+  List<Shopping> todayList = [];
 
   ShoppingProvider(this.isar) {
     loadShoppings();
@@ -22,6 +23,23 @@ class ShoppingProvider extends ChangeNotifier {
 
   Future<Shopping?> getShoppingById(int id) async {
     return await isar.shoppings.get(id);
+  }
+
+  Future<List<Shopping>> getShoppingByToday() async {
+    final today = DateTime.now();
+    final startOfDay = DateTime(today.year, today.month, today.day);
+    final endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59, 999);
+    final todayList = await isar.shoppings.filter()
+      .dateBetween(startOfDay, endOfDay)
+      .findAll();
+    return todayList;
+  }
+
+  Future<List<Shopping>> getShoppingByComplete() async {
+    final todayList = await isar.shoppings.filter()
+      .isCompleteEqualTo(true)
+      .findAll();
+    return todayList;
   }
 
   Future<Map<String, dynamic>> updateShopping(Shopping updatedShopping) async {

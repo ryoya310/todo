@@ -3,6 +3,7 @@ import '../imports.dart';
 class TodoProvider extends ChangeNotifier {
   final Isar isar;
   List<Todo> todos = [];
+  List<Todo> todayList = [];
 
   TodoProvider(this.isar) {
     loadTodos();
@@ -22,6 +23,25 @@ class TodoProvider extends ChangeNotifier {
 
   Future<Todo?> getTodoById(int id) async {
     return await isar.todos.get(id);
+  }
+
+  Future<List<Todo>> getTodoByToday() async {
+    final today = DateTime.now();
+    final startOfDay = DateTime(today.year, today.month, today.day);
+    final endOfDay = DateTime(today.year, today.month, today.day, 23, 59, 59, 999);
+    final todayList = await isar.todos.filter()
+      .dateFromBetween(startOfDay, endOfDay)
+      .sortByIsComplete()
+      .thenByDateFrom()
+      .findAll();
+    return todayList;
+  }
+
+  Future<List<Todo>> getTodoByComplete() async {
+    final todayList = await isar.todos.filter()
+      .isCompleteEqualTo(true)
+      .findAll();
+    return todayList;
   }
 
   Future<Map<String, dynamic>> updateTodo(Todo updatedTodo) async {

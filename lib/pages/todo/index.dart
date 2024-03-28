@@ -1,5 +1,4 @@
 import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 import '../../imports.dart';
 import 'item.dart';
 import 'edit.dart';
@@ -28,15 +27,6 @@ class _TodoPageState extends State<TodoPage> {
       Provider.of<TodoProvider>(context, listen: false).loadTodos()
     );
     selected = focused;
-  }
-
-  String formatDate(DateTime selected, bool isJP) {
-    initializeDateFormatting();
-    final locale = isJP ? 'ja' : 'en';
-    final format = isJP ? 'yyyy年MM月dd日(E)' : 'yyyy/MM/dd(E)';
-    final formatter = DateFormat(format, locale);
-    final formattedDate = formatter.format(selected);
-    return formattedDate;
   }
 
   @override
@@ -198,15 +188,26 @@ class _TodoPageState extends State<TodoPage> {
                   Expanded(
                     child: ListView(
                       shrinkWrap: true,
-                      // scrollDirection: Axis.horizontal,
-                      children: [
-                        ...getEventForDay(selected!)
-                          .map((todo) => TodoItem(todo: todo))
-                          .toList(),
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 74.0),
-                        ),
-                      ],
+                      children: getEventForDay(selected!).isEmpty
+                          ? [
+                              Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Text(
+                                  settingsProvider.isJP ? 'まだデータが登録されていません' : 'No data registered yet',
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.only(bottom: 74.0),
+                              ),
+                            ]
+                          : [
+                              ...getEventForDay(selected!)
+                                  .map((todo) => TodoItem(todo: todo))
+                                  .toList(),
+                              const Padding(
+                                padding: EdgeInsets.only(bottom: 74.0),
+                              ),
+                            ],
                     ),
                   ),
                 ],

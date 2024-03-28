@@ -35,19 +35,6 @@ class _ShoppingEditState extends State<ShoppingEdit> {
     super.dispose();
   }
 
-  // 日付と時間を組み合わせる
-  DateTime combineDateAndTime(String dateString, String timeString) {
-    final date = DateFormat('yyyy-MM-dd').parse(dateString);
-    final time = TimeOfDay.fromDateTime(DateFormat('HH:mm').parse(timeString));
-    return DateTime(
-      date.year,
-      date.month,
-      date.day,
-      time.hour,
-      time.minute,
-    );
-  }
-
   void submit(mode, shopping) async {
     final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     final shoppingProvider = Provider.of<ShoppingProvider>(context, listen: false);

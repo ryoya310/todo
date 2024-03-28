@@ -1,5 +1,3 @@
-import 'package:math_expressions/math_expressions.dart';
-import 'package:intl/intl.dart';
 import '../imports.dart';
 
 class Calculator extends StatefulWidget {
@@ -11,10 +9,11 @@ class Calculator extends StatefulWidget {
 
 class CalculatorState extends State<Calculator> {
 
+  bool showText = false;
   String output = '0';
   double sum = 0;
-  List<String> outputs = [];
-  List<String> middleOutputs = [];
+  List<dynamic> outputs = [];
+  List<dynamic> middleOutputs = [];
 
   void buttonPressed(String buttonText) {
     // クリア
@@ -63,11 +62,11 @@ class CalculatorState extends State<Calculator> {
       }
     }
 
-    List<String> middleOutputs = List<String>.from(outputs);
-    output = outputs.join('');
+    // 途中の式をディープコピー
+    List<dynamic> middleOutputs = List<dynamic>.from(outputs);
     // 最後の計算
     if (buttonText == '=') {
-      sum = _calculateResult(output);
+      sum = _calculateResult(outputs);
       outputs.clear();
       outputs.add(sum.toString());
     // 途中の計算
@@ -75,33 +74,75 @@ class CalculatorState extends State<Calculator> {
       if (middleOutputs.last == '+' || middleOutputs.last == '-' || middleOutputs.last == '/' || middleOutputs.last == '*') {
         middleOutputs.removeLast();
       }
-      sum = _calculateResult(middleOutputs.join(''));
+      sum = _calculateResult(middleOutputs);
     // 率の計算
     } else if (buttonText == '%') {
-      sum = _calculateResult(output) / 100;
+      sum = _calculateResult(outputs) / 100;
       outputs.clear();
       outputs.add(sum.toString());
-    } else {
-      if (outputs.length <= 1) {
-        sum = _calculateResult(output);
-      } else {
-        _calculateResult(output);
-      }
     }
     setState(() {
       output = sum == sum.round() ? sum.toInt().toString() : sum.toString();
     });
   }
 
-  double _calculateResult(String output) {
-    if (output == '') { return 0; }
-    // String output = '6/2(1+2)'; // 9
-    String processedInput = output.replaceAllMapped(RegExp(r'(\d)\('), (Match m) => '${m[1]}*(');
-    Parser p = Parser();
-    Expression exp = p.parse(processedInput);
-    ContextModel cm = ContextModel();
-    double eval = exp.evaluate(EvaluationType.REAL, cm);
-    return eval;
+  double _calculateResult(List<dynamic> expr) {
+    // 中置記法から逆ポーランド記法への変換
+    List<String> rpn = _toReversePolishNotation(expr);
+    // 逆ポーランド記法の式を計算
+    return _evaluateRPN(rpn);
+  }
+
+  List<String> _toReversePolishNotation(List<dynamic> expr) {
+    List<String> outputQueue = [];
+    List<String> operatorStack = [];
+    Map<String, int> precedence = {'+': 1, '-': 1, '*': 2, '/': 2};
+    for (var token in expr) {
+      if (double.tryParse(token) != null) {
+        outputQueue.add(token.toString());
+      } else if (precedence.containsKey(token)) {
+        while (operatorStack.isNotEmpty && precedence[operatorStack.last]! >= precedence[token]!) {
+          outputQueue.add(operatorStack.removeLast());
+        }
+        operatorStack.add(token);
+      }
+    }
+    while (operatorStack.isNotEmpty) {
+      outputQueue.add(operatorStack.removeLast());
+    }
+    return outputQueue;
+  }
+
+  double _evaluateRPN(List<String> rpn) {
+    List<double> stack = [];
+    for (String token in rpn) {
+      if (double.tryParse(token) != null) {
+        stack.add(double.parse(token));
+      } else {
+        if (stack.isNotEmpty) {
+          double right = stack.removeLast();
+          double left = stack.isNotEmpty ? stack.removeLast() : 0;
+          switch (token) {
+            case '+':
+              stack.add(left + right);
+              break;
+            case '-':
+              stack.add(left - right);
+              break;
+            case '*':
+              stack.add(left * right);
+              break;
+            case '/':
+              stack.add(left / right);
+              break;
+          }
+        }
+      }
+    }
+    if (stack.isNotEmpty) {
+      return stack.first;
+    }
+    return 0;
   }
 
   Widget buildButton(String buttonText) {
@@ -185,19 +226,15 @@ class CalculatorState extends State<Calculator> {
     );
   }
 
-  String customFormat(double value) {
-    // 小数部が0でない場合は小数点以下を最大2桁まで表示
-    String format = value.remainder(1) == 0 ? "#,##0" : "#,##0.##";
-    return NumberFormat(format, "en_US").format(value);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.transparent,
       body: Container(
         padding: const EdgeInsets.fromLTRB(4, 4, 4, 4),
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 30, 30, 30),
+          borderRadius: BorderRadius.circular(14.0),
         ),
         child: Column(
           children: <Widget>[
@@ -205,6 +242,7 @@ class CalculatorState extends State<Calculator> {
               alignment: Alignment.centerRight,
               margin: const EdgeInsets.all(4),
               padding: const EdgeInsets.symmetric(vertical: 2, horizontal: 11.0),
+              height: 24,
               decoration: BoxDecoration(
                 color: const Color.fromARGB(255, 255, 255, 255),
                 borderRadius: BorderRadius.circular(14.0),
@@ -220,24 +258,57 @@ class CalculatorState extends State<Calculator> {
                 ),
               ])
             ),
-            Container(
-              alignment: Alignment.centerRight,
-              margin: const EdgeInsets.fromLTRB(4, 4, 4, 8),
-              padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8.0),
-              decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 255, 255, 255),
-                borderRadius: BorderRadius.circular(14.0),
-              ),
-              child: Column(children: [
-                Text(
-                  customFormat(double.parse(output)),
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 50.0,
-                    color: Colors.black87
-                  )
+            GestureDetector(
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: output)).then((_) {
+                  setState(() {
+                    showText = true;
+                  });
+                  Future.delayed(const Duration(seconds: 3), () {
+                    setState(() {
+                      showText = false;
+                    });
+                  });
+                });
+              },
+              child: Container(
+                alignment: Alignment.centerRight,
+                margin: const EdgeInsets.fromLTRB(4, 4, 4, 8),
+                padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8.0),
+                height: 72,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 255, 255, 255),
+                  borderRadius: BorderRadius.circular(14.0),
                 ),
-              ])
+                child: Stack(children: [
+                  if (showText)
+                    const Positioned(
+                      top: 1,
+                      right: 3,
+                      child: Text(
+                        'copy!!',
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11.0,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  Container(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    width: double.infinity,
+                    child: Text(
+                      formatNumber(double.parse(output)),
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.right,
+                      style: const TextStyle(
+                        fontSize: 48.0,
+                        color: Colors.black87,
+                      ),
+                    ),
+                  )
+                ])
+              ),
             ),
             Column(children: [
               Row(

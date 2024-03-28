@@ -1,5 +1,4 @@
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:intl/intl.dart';
 import '../../imports.dart';
 import 'edit.dart';
 
@@ -15,12 +14,6 @@ class CalculationItem extends StatelessWidget {
     final calculation = this.calculation;
     final calculationProvider = Provider.of<CalculationProvider>(context, listen: false);
     final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
-
-  String customFormat(double value) {
-    // 小数部が0でない場合は小数点以下を最大2桁まで表示
-    String format = value.remainder(1) == 0 ? "#,##0" : "#,##0.##";
-    return NumberFormat(format, "en_US").format(value);
-  }
 
     return Container(
       margin: const EdgeInsets.fromLTRB(10, 4, 10, 4),
@@ -63,8 +56,11 @@ class CalculationItem extends StatelessWidget {
             children: [
               Container(
                 height: 62,
-                width: 4,
-                color: Colors.lightGreen,
+                width: 5,
+                decoration: BoxDecoration(
+                  color: Colors.lightGreen,
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -72,9 +68,9 @@ class CalculationItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      customFormat(calculation.calcData??0),
+                      formatNumber(calculation.calcData??0),
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 28.0)
+                      style: const TextStyle(fontSize: 24.0)
                     ),
                     Row(
                       children: [

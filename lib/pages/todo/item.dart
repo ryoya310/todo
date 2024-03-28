@@ -75,8 +75,11 @@ class TodoItem extends StatelessWidget {
               const SizedBox(width: 10),
               Container(
                 height: 50,
-                width: 4,
-                color: Colors.blue,
+                width: 5,
+                decoration: BoxDecoration(
+                  color: Colors.yellowAccent,
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
@@ -101,7 +104,7 @@ class TodoItem extends StatelessWidget {
             child: const SizedBox(
               child: Icon(
                 LineIcons.sketch,
-                color: Colors.lightBlue
+                color: Colors.yellowAccent
               ),
             ),
           ),

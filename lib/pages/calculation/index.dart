@@ -22,7 +22,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     showDialog(
       context: context,
-      barrierColor: Colors.transparent,
+      // barrierColor: Colors.transparent,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.transparent,
@@ -34,15 +34,17 @@ class _CalculatorPageState extends State<CalculatorPage> {
               ConstrainedBox(
                 constraints: const BoxConstraints(
                   maxWidth: 288,
+                  minWidth: 288,
                 ),
                 child: Container(
                   height: 474,
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.0),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 20,
-                        blurRadius: 10,
+                        color: const Color.fromARGB(255, 255, 255, 255).withOpacity(0.2),
+                        spreadRadius: 5,
+                        blurRadius: 3,
                         offset: const Offset(0, 0),
                       ),
                     ],

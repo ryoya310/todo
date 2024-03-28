@@ -1,37 +1,5 @@
 import './imports.dart';
 
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) async {
-    final dir = await getApplicationDocumentsDirectory();
-    final isar = await Isar.open(
-      [TodoSchema, CalculationSchema, ShoppingSchema],
-      directory: dir.path,
-    );
-    final now = DateTime.now();
-    final todos = await isar.todos.filter().dateFromLessThan(now).and().dateToGreaterThan(now).findAll();
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    for (final todo in todos) {
-      var androidDetails = const AndroidNotificationDetails(
-        'channel id',
-        'channel name',
-        channelDescription: 'channel description',
-        importance: Importance.high,
-        priority: Priority.high,
-      );
-      var iOSDetails = const DarwinNotificationDetails();
-      var platformChannelSpecifics = NotificationDetails(
-        android: androidDetails, iOS: iOSDetails);
-      await flutterLocalNotificationsPlugin.show(
-        todo.id, // 通知ID
-        'タスク通知', // 通知タイトル
-        '${todo.name}の時間です', // 通知本文
-        platformChannelSpecifics, // 通知の詳細設定
-      );
-    }
-    return Future.value(true);
-  });
-}
-
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -40,19 +8,10 @@ void main() async {
     [TodoSchema, CalculationSchema, ShoppingSchema],
     directory: dir.path,
   );
-  // 最小ウィンドウサイズを設定
-  const minSize = Size(400, 600);
-  await DesktopWindow.setMinWindowSize(minSize);
-
-  // Workmanager().initialize(
-  //   callbackDispatcher,
-  //   isInDebugMode: false,
-  // );
-  // Workmanager().registerPeriodicTask(
-  //   "uniqueName", 
-  //   "simpleTask",
-  //   frequency: const Duration(minutes: 1),
-  // );
+  // ウィンドウサイズを設定
+  await DesktopWindow.setWindowSize(const Size(400, 800));
+  await DesktopWindow.setMinWindowSize(const Size(400, 800));
+  await DesktopWindow.setMaxWindowSize(const Size(600, 1000));
 
   runApp(
     MultiProvider(
@@ -108,6 +67,7 @@ class MyApp extends StatelessWidget {
             return MaterialApp(
               title: appName,
               theme: ThemeData(
+                primarySwatch: Colors.green,
                 brightness: settingsProvider.currentTheme,
                 fontFamily: 'Noto_Sans_JP_Regular',
               ),
@@ -136,7 +96,7 @@ class AddPage extends StatefulWidget {
   State<AddPage> createState() => _AddPageState();
 }
 
-class _AddPageState extends State<AddPage> with TickerProviderStateMixin {
+class _AddPageState extends State<AddPage> with TickerProviderStateMixin, WidgetsBindingObserver {
 
   MotionTabBarController? _motionTabBarController;
   @override
@@ -167,12 +127,12 @@ class _AddPageState extends State<AddPage> with TickerProviderStateMixin {
       body: TabBarView(
         physics: const NeverScrollableScrollPhysics(),
         controller: _motionTabBarController,
-        children: const <Widget>[
-          HomePage(),
-          TodoPage(),
-          ShoppingPage(),
-          CalculatorPage(),
-          SettingsPage(),
+        children: <Widget>[
+          HomePage(motionTabBarController: _motionTabBarController),
+          const TodoPage(),
+          const ShoppingPage(),
+          const CalculatorPage(),
+          const SettingsPage(),
         ],
       ),
       bottomNavigationBar: Footer(controller: _motionTabBarController!),
