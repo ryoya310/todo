@@ -7,6 +7,9 @@ flutter doctor
 flutter clean
 flutter pub get
 
+## アップデート
+flutter upgrade
+
 ## 全てのキャッシュされたパッケージを再ダウンロード
 flutter pub cache repair
 

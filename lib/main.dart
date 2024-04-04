@@ -8,6 +8,9 @@ void main() async {
     [TodoSchema, CalculationSchema, ShoppingSchema],
     directory: dir.path,
   );
+  if (Platform.isAndroid || Platform.isIOS) {
+    await _initGoogleMobileAds();
+  }
   // ウィンドウサイズを設定
   await DesktopWindow.setWindowSize(const Size(400, 800));
   await DesktopWindow.setMinWindowSize(const Size(400, 800));
@@ -24,6 +27,10 @@ void main() async {
       child: MyApp(isar: isar),
     ),
   );
+}
+
+Future<InitializationStatus> _initGoogleMobileAds() {
+  return MobileAds.instance.initialize();
 }
 
 class MyApp extends StatelessWidget {

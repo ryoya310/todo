@@ -28,9 +28,11 @@ export 'package:isar/isar.dart';
 export 'package:flutter_local_notifications/flutter_local_notifications.dart';
 export 'package:workmanager/workmanager.dart';
 export 'package:flutter_native_splash/flutter_native_splash.dart';
+export 'package:google_mobile_ads/google_mobile_ads.dart';
 
 // config
 export 'config.dart';
+export 'ad_helper.dart';
 
 // classes
 export 'classes/app.dart';

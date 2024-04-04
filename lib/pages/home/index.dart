@@ -14,9 +14,32 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
 
+  BannerAd? myBanner;
+
   @override
   void initState() {
     super.initState();
+    if (Platform.isAndroid || Platform.isIOS) {
+      _initBannerAd();
+    }
+  }
+
+  void _initBannerAd() {
+    myBanner = BannerAd(
+      adUnitId: AdHelper.bannerAdUnitId,
+      size: AdSize.banner,
+      request: const AdRequest(),
+      listener: const BannerAdListener(
+        // バナー広告のイベントリスナー
+      ),
+    );
+    myBanner?.load();
+  }
+
+  @override
+  void dispose() {
+    myBanner?.dispose();
+    super.dispose();
   }
 
   @override
@@ -107,6 +130,13 @@ class HomePageState extends State<HomePage> {
                         widget.motionTabBarController?.index = 2;
                       }
                     ),
+                    if (myBanner != null)
+                      Container(
+                        alignment: Alignment.center,
+                        width: myBanner!.size.width.toDouble(),
+                        height: myBanner!.size.height.toDouble(),
+                        child: AdWidget(ad: myBanner!),
+                      ),
                   ],
                 )
               )
